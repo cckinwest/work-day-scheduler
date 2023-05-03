@@ -3,7 +3,8 @@
 // in the html.
 
 var scheduleContainer = $(".scheduleContainer");
-
+//createSlot function will create a time-block by inputting a time in ms
+//so that it becomes more flexible to create the time-blocks
 function createSlot(time) {
   var timeBlock = $("<div></div>", {
     class: "row time-block",
@@ -29,18 +30,12 @@ function createSlot(time) {
   }).appendTo(saveBtn);
 
   timeBlock.attr("id", time);
-
-  var h = new Date(time).getHours();
-
-  if (h < 12) {
-    hour.text(`${h}AM`);
-  } else if (h === 12) {
-    hour.text("NOON");
-  } else {
-    hour.text(`${h - 12}PM`);
-  }
+  //use the time in ms as id of time-block,
+  //so that it becomes easier to manipulate and compare different time-blocks.
+  hour.text(dayjs(time).format("hA"));
 }
 
+//add function for the click of save button
 function handleClick() {
   var timeBlock = $(this).parent();
   var description = timeBlock.find("textarea");
@@ -48,16 +43,16 @@ function handleClick() {
   var timeinms = timeBlock.attr("id");
   var taskDescription = description.val();
 
-  var timeArray = [];
-  var records = [];
+  var timeArray = []; //initialize the array containing the time of record
+  var records = []; //initialize the array containing objects of time and task
 
   if (localStorage.getItem("timeArray")) {
     timeArray = JSON.parse(localStorage.getItem("timeArray"));
-  }
+  } //if the storage of timeArray is not null, take it.
 
   if (localStorage.getItem("records")) {
     records = JSON.parse(localStorage.getItem("records"));
-  }
+  } //if the storage of record is not null, take it.
 
   if (timeArray.includes(timeinms)) {
     var ind = timeArray.indexOf(timeinms);
@@ -68,14 +63,17 @@ function handleClick() {
       time: timeinms,
       task: taskDescription,
     });
-  }
+  } //if the time is already in the timeArray,
+  //then modify the task in the respective object
+  //otherwise, push a new object
 
   localStorage.setItem("timeArray", JSON.stringify(timeArray));
   localStorage.setItem("records", JSON.stringify(records));
 }
 
+//create a workday schedule for a given date
 function renderEmptySlots(dateStr) {
-  var start = new Date(dateStr).getTime();
+  var start = dayjs(dateStr).valueOf();
 
   for (i = 8; i < 17; i++) {
     createSlot(start + i * 3600 * 1000);
@@ -89,6 +87,7 @@ function callFromRecord() {
     var timeArray = JSON.parse(localStorage.getItem("timeArray"));
     var records = JSON.parse(localStorage.getItem("records"));
 
+    //if a time and a task is in records, add them to the respective textarea
     $(".description")
       .filter(function () {
         var timeBlock = $(this).parent();
@@ -103,14 +102,17 @@ function callFromRecord() {
 }
 
 function createColorIndicator() {
-  var currentTime = new Date().getTime();
+  var currentTime = dayjs().valueOf();
   currentTime -= currentTime % 3600000;
+  //round down the currentTime to hour
 
   $(".time-block")
     .filter(function () {
       return $(this).attr("id") < currentTime;
     })
     .addClass("past");
+  //if the time of a time-block is less than the current time,
+  //then add 'past' style
 
   $(`.time-block[id=${currentTime}]`).addClass("present");
 
@@ -119,25 +121,6 @@ function createColorIndicator() {
       return $(this).attr("id") > currentTime;
     })
     .addClass("future");
-}
-
-function convertDate(date) {
-  const Months = [
-    "JAN",
-    "FEB",
-    "MAR",
-    "APR",
-    "MAY",
-    "JUN",
-    "JUL",
-    "AUG",
-    "SEP",
-    "OCT",
-    "NOV",
-    "DEC",
-  ];
-
-  return `${Months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 }
 
 $(function () {
@@ -159,20 +142,18 @@ $(function () {
   // attribute of each time-block be used to do this?
   //
   // TODO: Add code to display the current date in the header of the page.
-  var d = new Date();
-
-  var todayStr = convertDate(d);
+  var todayStr = dayjs().format("MMM D, YYYY");
 
   $("#currentDay").text(todayStr);
   renderEmptySlots(todayStr);
+  //when the page is load the default page is the schedule of today
   callFromRecord();
   createColorIndicator();
 
+  //the datepicker is for selecting the schedule of any day.
   $("#datepicker").datepicker({
     onSelect: function () {
-      var selectedDate = new Date($(this).val());
-
-      $("#currentDay").text(convertDate(selectedDate));
+      $("#currentDay").text(dayjs($(this).val()).format("MMM D, YYYY"));
       scheduleContainer.empty();
       renderEmptySlots($(this).val());
       callFromRecord();
@@ -183,5 +164,8 @@ $(function () {
   $(".clearBtn").on("click", function () {
     localStorage.removeItem("timeArray");
     localStorage.removeItem("records");
+    scheduleContainer.empty();
+    renderEmptySlots($("#datepicker").val());
+    createColorIndicator();
   });
 });
