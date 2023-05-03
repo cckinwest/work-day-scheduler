@@ -112,11 +112,7 @@ function createColorIndicator() {
     })
     .addClass("past");
 
-  $(".time-block")
-    .filter(function () {
-      return $(this).attr("id") === currentTime;
-    })
-    .addClass("present");
+  $(`.time-block[id=${currentTime}]`).addClass("present");
 
   $(".time-block")
     .filter(function () {
