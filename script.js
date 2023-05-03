@@ -45,8 +45,8 @@ function handleClick() {
   var timeBlock = $(this).parent();
   var description = timeBlock.find("textarea");
 
-  var time = timeBlock.attr("id");
-  var task = description.val();
+  var timeinms = timeBlock.attr("id");
+  var taskDescription = description.val();
 
   var timeArray = [];
   var records = [];
@@ -59,14 +59,14 @@ function handleClick() {
     records = JSON.parse(localStorage.getItem("records"));
   }
 
-  if (timeArray.includes(time)) {
-    var ind = timeArray.indexOf(time);
-    records[ind].task = task;
+  if (timeArray.includes(timeinms)) {
+    var ind = timeArray.indexOf(timeinms);
+    records[ind].task = taskDescription;
   } else {
-    timeArray.push(time);
+    timeArray.push(timeinms);
     records.push({
-      time: time,
-      task: task,
+      time: timeinms,
+      task: taskDescription,
     });
   }
 
@@ -168,6 +168,9 @@ $(function () {
   var todayStr = convertDate(d);
 
   $("#currentDay").text(todayStr);
+  renderEmptySlots(todayStr);
+  callFromRecord();
+  createColorIndicator();
 
   $("#datepicker").datepicker({
     onSelect: function () {
@@ -180,10 +183,6 @@ $(function () {
       createColorIndicator();
     },
   });
-
-  renderEmptySlots(todayStr);
-  callFromRecord();
-  createColorIndicator();
 
   $(".clearBtn").on("click", function () {
     localStorage.removeItem("timeArray");
