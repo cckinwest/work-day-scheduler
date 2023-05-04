@@ -17,7 +17,6 @@ textarea {
 }
 
 .description:disabled {
-  color: #454545;
   font-weight: bold;
 }
 
