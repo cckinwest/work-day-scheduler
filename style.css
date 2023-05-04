@@ -17,7 +17,8 @@ textarea {
 }
 
 .description:disabled {
-  color: #ffffff;
+  color: #454545;
+  font-weight: bold;
 }
 
 .time-block {
