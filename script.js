@@ -42,7 +42,7 @@ function handleClick() {
     var timeBlock = $(this).parent();
     var description = timeBlock.find("textarea");
 
-    description.prop("disabled", true); //turn to edit mode
+    description.prop("readOnly", true); //turn to edit mode
     $(this).css("background-color", "#F7D060");
     $(this).find("i").removeClass("fas fa-save");
     $(this).find("i").addClass("fa fa-edit");
@@ -80,7 +80,7 @@ function handleClick() {
     var timeBlock = $(this).parent();
     var description = timeBlock.find("textarea");
 
-    description.prop("disabled", false); //return to save mode
+    description.prop("readOnly", false); //return to save mode
     $(this).css("background-color", "#06aed5");
     $(this).find("i").removeClass("fa fa-edit");
     $(this).find("i").addClass("fas fa-save");
@@ -114,7 +114,7 @@ function callFromRecord() {
         var ind = timeArray.indexOf(timeBlock.attr("id"));
         return records[ind].task;
       })
-      .prop("disabled", true);
+      .prop("readOnly", true);
     //the button of the time-block with record is in edit mode
     $(".saveBtn")
       .filter(function () {
