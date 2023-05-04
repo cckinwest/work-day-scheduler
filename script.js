@@ -37,38 +37,54 @@ function createSlot(time) {
 
 //add function for the click of save button
 function handleClick() {
-  var timeBlock = $(this).parent();
-  var description = timeBlock.find("textarea");
+  //if the button is in save mode
+  if ($(this).find("i").hasClass("fas fa-save")) {
+    var timeBlock = $(this).parent();
+    var description = timeBlock.find("textarea");
 
-  var timeinms = timeBlock.attr("id");
-  var taskDescription = description.val();
+    description.prop("disabled", true); //turn to edit mode
+    $(this).css("background-color", "#F7D060");
+    $(this).find("i").removeClass("fas fa-save");
+    $(this).find("i").addClass("fa fa-edit");
 
-  var timeArray = []; //initialize the array containing the time of record
-  var records = []; //initialize the array containing objects of time and task
+    var timeinms = timeBlock.attr("id");
+    var taskDescription = description.val();
 
-  if (localStorage.getItem("timeArray")) {
-    timeArray = JSON.parse(localStorage.getItem("timeArray"));
-  } //if the storage of timeArray is not null, take it.
+    var timeArray = []; //initialize the array containing the time of record
+    var records = []; //initialize the array containing objects of time and task
 
-  if (localStorage.getItem("records")) {
-    records = JSON.parse(localStorage.getItem("records"));
-  } //if the storage of record is not null, take it.
+    if (localStorage.getItem("timeArray")) {
+      timeArray = JSON.parse(localStorage.getItem("timeArray"));
+    } //if the storage of timeArray is not null, take it.
 
-  if (timeArray.includes(timeinms)) {
-    var ind = timeArray.indexOf(timeinms);
-    records[ind].task = taskDescription;
-  } else {
-    timeArray.push(timeinms);
-    records.push({
-      time: timeinms,
-      task: taskDescription,
-    });
-  } //if the time is already in the timeArray,
-  //then modify the task in the respective object
-  //otherwise, push a new object
+    if (localStorage.getItem("records")) {
+      records = JSON.parse(localStorage.getItem("records"));
+    } //if the storage of record is not null, take it.
 
-  localStorage.setItem("timeArray", JSON.stringify(timeArray));
-  localStorage.setItem("records", JSON.stringify(records));
+    if (timeArray.includes(timeinms)) {
+      var ind = timeArray.indexOf(timeinms);
+      records[ind].task = taskDescription;
+    } else {
+      timeArray.push(timeinms);
+      records.push({
+        time: timeinms,
+        task: taskDescription,
+      });
+    } //if the time is already in the timeArray,
+    //then modify the task in the respective object
+    //otherwise, push a new object
+
+    localStorage.setItem("timeArray", JSON.stringify(timeArray));
+    localStorage.setItem("records", JSON.stringify(records));
+  } else if ($(this).find("i").hasClass("fa fa-edit")) {
+    var timeBlock = $(this).parent();
+    var description = timeBlock.find("textarea");
+
+    description.prop("disabled", false); //return to save mode
+    $(this).css("background-color", "#06aed5");
+    $(this).find("i").removeClass("fa fa-edit");
+    $(this).find("i").addClass("fas fa-save");
+  } //if the button is in edit mode
 }
 
 //create a workday schedule for a given date
@@ -97,7 +113,23 @@ function callFromRecord() {
         var timeBlock = $(this).parent();
         var ind = timeArray.indexOf(timeBlock.attr("id"));
         return records[ind].task;
-      });
+      })
+      .prop("disabled", true);
+    //the button of the time-block with record is in edit mode
+    $(".saveBtn")
+      .filter(function () {
+        var timeBlock = $(this).parent();
+        return timeArray.includes(timeBlock.attr("id"));
+      })
+      .css("background-color", "#F7D060");
+
+    $("i")
+      .filter(function () {
+        var timeBlock = $(this).parent().parent();
+        return timeArray.includes(timeBlock.attr("id"));
+      })
+      .removeClass("fas fa-save")
+      .addClass("fa fa-edit");
   }
 }
 

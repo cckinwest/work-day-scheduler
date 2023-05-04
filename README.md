@@ -17,3 +17,5 @@ The schedule for a date contains time-blocks from 8am to 4pm. By clicking on the
 ### Extra feature
 
 The header contains a datepicker. By clicking it, a calender is popped out. The work-day-schedule for the date selected in the calender will be generated. Finally there is a clear button which can delete all the records saved.
+
+When a task is added to the time-block, press the button to save, then the button will change to edit mode and the textarea is locked. Press the button again to unlock and the button will change back to save.
