@@ -197,7 +197,12 @@ $(function () {
     localStorage.removeItem("timeArray");
     localStorage.removeItem("records");
     scheduleContainer.empty();
-    renderEmptySlots($("#datepicker").val());
+    if ($("#datepicker").val()) {
+      renderEmptySlots($("#datepicker").val());
+    } else {
+      renderEmptySlots(todayStr);
+    }
+
     createColorIndicator();
   });
 });
