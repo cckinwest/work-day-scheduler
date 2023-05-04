@@ -16,6 +16,10 @@ textarea {
   white-space: pre-wrap;
 }
 
+.description:disabled {
+  color: #ffffff;
+}
+
 .time-block {
   border-radius: 15px;
 }
